@@ -7,27 +7,23 @@
 
 import UIKit
 
-
 class PhotosViewController: UICollectionViewController {
     
     private lazy var addBarButtonItem: UIBarButtonItem = {
         return UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapButton))
     }()
-
+    
     private lazy var actionBarButtonItem: UIBarButtonItem = {
         return UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(actionTapButton))
     }()
     
-    
-    
+    //MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupCollectionView()
         setupNavigationBar()
         setupSearchBar()
-        
-        
         
     }
     
@@ -45,7 +41,7 @@ class PhotosViewController: UICollectionViewController {
     
     private func setupCollectionView() {
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
-        collectionView.backgroundColor = .systemBackground
+        collectionView.backgroundColor = .systemBlue
         
         
     }
@@ -72,7 +68,7 @@ class PhotosViewController: UICollectionViewController {
     
     //MARK: - UICollectionViewDataSource, UICollectionViewDelegate
     
-   
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 5
     }
@@ -83,7 +79,7 @@ class PhotosViewController: UICollectionViewController {
         
         return cell
     }
-
+    
 }
 
 //MARK: - UISearchBarDelegate
