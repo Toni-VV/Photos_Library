@@ -15,6 +15,9 @@ class PhotosViewController: UICollectionViewController {
     
     private var photos = [UnsplashPhoto]()
     
+    private let itemsPerRow: CGFloat = 2
+    private let sectionsInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+    
     private lazy var addBarButtonItem: UIBarButtonItem = {
         return UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapButton))
     }()
@@ -47,7 +50,11 @@ class PhotosViewController: UICollectionViewController {
     
     private func setupCollectionView() {
         collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: PhotoCell.identifier)
-        collectionView.backgroundColor = .systemBlue
+        collectionView.backgroundColor = .systemBackground
+        
+        collectionView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        collectionView.contentInsetAdjustmentBehavior = .automatic
+        
         
         
         
@@ -109,6 +116,32 @@ extension PhotosViewController: UISearchBarDelegate {
             }
         })
         
-        }
     }
+}
+
+//MARK: - UICollectionViewDelegateFlowLayout
+
+extension PhotosViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let photo = photos[indexPath.item]
+        let paddingSpace = sectionsInset.left * (itemsPerRow + 1)
+        let availableWidth = view.frame.width - paddingSpace
+        let widthPerItem = availableWidth / itemsPerRow
+        let height = CGFloat(photo.height) * widthPerItem / CGFloat(photo.width)
+        return CGSize(width: widthPerItem, height: height)
+
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return sectionsInset
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return sectionsInset.left
+    }
+    
+    
+}
 
