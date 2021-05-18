@@ -9,6 +9,12 @@ import UIKit
 
 class PhotosViewController: UICollectionViewController {
     
+    var network = NetworkDataFetcher()
+    
+    var timer: Timer?
+    
+    private var photos = [UnsplashPhoto]()
+    
     private lazy var addBarButtonItem: UIBarButtonItem = {
         return UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapButton))
     }()
@@ -40,8 +46,9 @@ class PhotosViewController: UICollectionViewController {
     //MARK: - Setup UI Elements
     
     private func setupCollectionView() {
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: PhotoCell.identifier)
         collectionView.backgroundColor = .systemBlue
+        
         
         
     }
@@ -70,12 +77,15 @@ class PhotosViewController: UICollectionViewController {
     
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return photos.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        cell.backgroundColor = .systemPink
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCell.identifier,
+                                                      for: indexPath) as! PhotoCell
+        
+        let unsplashPhoto = photos[indexPath.item]
+        cell.unsplashPhoto = unsplashPhoto
         
         return cell
     }
@@ -87,6 +97,18 @@ class PhotosViewController: UICollectionViewController {
 extension PhotosViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        print(searchText)
+        
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { (_) in
+            
+            self.network.fetchPhotos(searchTerm: searchText) { [weak self] result in
+                guard let response = result else { return }
+                self?.photos = response
+                DispatchQueue.main.async {
+                    self?.collectionView.reloadData()
+                }
+            }
+        })
+        
+        }
     }
-}
+
